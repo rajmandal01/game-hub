@@ -5,8 +5,19 @@ import App from "./App";
 import theme from "./theme";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const queryClient = new QueryClient();
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      cacheTime: 300_000, // 5m
+      staleTime: 10 * 1000, // 10s
+      refetchOnMount: false,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -14,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <QueryClientProvider client={queryClient}>
         <App />
+        <ReactQueryDevtools />
       </QueryClientProvider>
     </ChakraProvider>
   </React.StrictMode>
