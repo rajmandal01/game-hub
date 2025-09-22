@@ -10,6 +10,7 @@ import { Platform } from "./hooks/useGames";
 import { Genre } from "./hooks/useGenres";
 import ToDoList from "./react-query/TodoList";
 import Posts from "./react-query/Posts";
+import InfintePosts from "./react-query/InfinitePosts";
 
 export interface GameQuery {
   genre: Genre | null;
@@ -62,7 +63,8 @@ function App() {
         <GameGrid gameQuery={gameQuery} />
         <GridItem>
           {/* <ToDoList /> */}
-          <Posts />
+          {/* <Posts /> */}
+          <InfintePosts />
         </GridItem>
       </GridItem>
     </Grid>
