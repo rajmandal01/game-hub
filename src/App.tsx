@@ -9,6 +9,7 @@ import SortSelector from "./components/SortSelector";
 import { Platform } from "./hooks/useGames";
 import { Genre } from "./hooks/useGenres";
 import ToDoList from "./react-query/TodoList";
+import Posts from "./react-query/Posts";
 
 export interface GameQuery {
   genre: Genre | null;
@@ -60,7 +61,8 @@ function App() {
         </Box>
         <GameGrid gameQuery={gameQuery} />
         <GridItem>
-          <ToDoList />
+          {/* <ToDoList /> */}
+          <Posts />
         </GridItem>
       </GridItem>
     </Grid>
