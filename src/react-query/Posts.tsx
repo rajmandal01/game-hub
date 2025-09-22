@@ -1,32 +1,61 @@
+import { Button, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import React, { useState } from "react";
 import usePosts from "./hooks/usePosts";
+import { BsChevronDown } from "react-icons/bs";
 
 export default function Posts() {
   const [userId, setUserId] = useState<number | undefined>();
-  const { data: posts, error, isLoading } = usePosts(userId);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const { data: posts, error, isLoading } = usePosts({ page, pageSize, userId });
+
   if (isLoading) <p>Loading posts...</p>;
   if (error) <p>{error.message}</p>;
 
   return (
     <div>
-      {
-        <select
-          className="form-select mb-3"
-          onChange={(event) => setUserId(parseInt(event.target.value))}
-          value={userId}
-        >
-          <option value="">Select User</option>
-          <option value={1}>User 1</option>
-          <option value={2}>User 2</option>
-          <option value={3}>User 3</option>
-        </select>
-      }
+      <Menu>
+        <MenuButton as={Button} rightIcon={<BsChevronDown />}>
+          {userId ? `User ${userId}` : "Select User"}
+        </MenuButton>
+        <MenuList>
+          {[1, 2, 3].map((userId) => (
+            <MenuItem value={userId} key={userId} onClick={() => setUserId(userId)}>
+              {`User ${userId}`}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
+
       {posts?.map((post) => (
-        <div>
+        <div key={post.id}>
           <h4>{post.title}</h4>
           <p>{post.body}</p>
         </div>
       ))}
+
+      <div>
+        <Button
+          whiteSpace="normal"
+          textAlign="left"
+          onClick={() => setPage(page - 1)}
+          fontSize="md"
+          variant="link"
+        >
+          Previous
+        </Button>
+
+        <Button
+          whiteSpace="normal"
+          textAlign="right"
+          onClick={() => setPage(page + 1)}
+          fontSize="md"
+          marginStart={"4"}
+          variant="link"
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }
