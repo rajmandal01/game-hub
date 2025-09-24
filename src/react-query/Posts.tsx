@@ -1,5 +1,5 @@
 import { Button, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import usePosts from "./hooks/usePosts";
 import { BsChevronDown } from "react-icons/bs";
 
@@ -7,7 +7,7 @@ export default function Posts() {
   const [userId, setUserId] = useState<number | undefined>();
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const { data: posts, error, isLoading } = usePosts({ page, pageSize, userId });
+  const { data: posts, error, isLoading, refetch } = usePosts({ page, pageSize, userId });
 
   if (isLoading) <p>Loading posts...</p>;
   if (error) <p>{error.message}</p>;
@@ -20,7 +20,13 @@ export default function Posts() {
         </MenuButton>
         <MenuList>
           {[1, 2, 3].map((userId) => (
-            <MenuItem value={userId} key={userId} onClick={() => setUserId(userId)}>
+            <MenuItem
+              value={userId}
+              key={userId}
+              onClick={() => {
+                setUserId(userId);
+              }}
+            >
               {`User ${userId}`}
             </MenuItem>
           ))}

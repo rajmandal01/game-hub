@@ -1,0 +1,515 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cartservice
+  name: cartservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cartservice
+  template:
+    metadata:
+      labels:
+        app: cartservice
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/cartservice:sample-public-image-v0.10.3
+          name: cartservice
+          ports:
+            - containerPort: 7070
+          env:
+            - name: PORT
+              value: "7070"
+            - name: REDIS_ADDR
+              value: "redis-cache:6379"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cartservice
+  name: cartservice
+spec:
+  type: ClusterIP
+  ports:
+    - name: cartservice
+      port: 7070
+      targetPort: 7070
+  selector:
+    app: cartservice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis-cache
+  name: redis-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-cache
+  template:
+    metadata:
+      labels:
+        app: redis-cache
+    spec:
+      containers:
+        - image: redis:alpine
+          name: redis-cache
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis-cache
+  name: redis-cache
+spec:
+  type: ClusterIP
+  ports:
+    - name: redis-cache
+      port: 6379
+      targetPort: 6379
+  selector:
+    app: redis-cache
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: recommendation
+  name: recommendation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recommendation
+  template:
+    metadata:
+      labels:
+        app: recommendation
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/recommendationservice:sample-public-image-v0.10.3
+          name: recommendation
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: productcatalog:3550
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: recommendation
+  name: recommendation
+spec:
+  type: ClusterIP
+  ports:
+    - name: recommendation
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: recommendation
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: productcatalog
+  name: productcatalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productcatalog
+  template:
+    metadata:
+      labels:
+        app: productcatalog
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/productcatalogservice:sample-public-image-v0.10.3
+          name: productcatalog
+          ports:
+            - containerPort: 3550
+          env:
+            - name: PORT
+              value: "3550"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: productcatalog
+  name: productcatalog
+spec:
+  type: ClusterIP
+  ports:
+    - name: productcatalog
+      port: 3550
+      targetPort: 3550
+  selector:
+    app: productcatalog
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shipping
+  name: shipping
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shipping
+  template:
+    metadata:
+      labels:
+        app: shipping
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/shippingservice:sample-public-image-v0.10.3
+          name: shipping
+          ports:
+            - containerPort: 50051
+          env:
+            - name: PORT
+              value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: shipping
+  name: shipping
+spec:
+  type: ClusterIP
+  ports:
+    - name: shipping
+      port: 50051
+      targetPort: 50051
+  selector:
+    app: shipping
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: currency
+  name: currency
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: currency
+  template:
+    metadata:
+      labels:
+        app: currency
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/currencyservice:sample-public-image-v0.10.3
+          name: currency
+          ports:
+            - containerPort: 7000
+          env:
+            - name: PORT
+              value: "7000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: currency
+  name: currency
+spec:
+  type: ClusterIP
+  ports:
+    - name: currency
+      port: 7000
+      targetPort: 7000
+  selector:
+    app: currency
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: payment
+  name: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/paymentservice:sample-public-image-v0.10.3
+          name: payment
+          ports:
+            - containerPort: 50051
+          env:
+            - name: PORT
+              value: "50051"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: payment
+  name: payment
+spec:
+  type: ClusterIP
+  ports:
+    - name: payment
+      port: 50051
+      targetPort: 50051
+  selector:
+    app: payment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: email
+  name: email
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: email
+  template:
+    metadata:
+      labels:
+        app: email
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/emailservice:sample-public-image-v0.10.3
+          name: email
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: email
+  name: email
+spec:
+  type: ClusterIP
+  ports:
+    - name: email
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: email
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ad
+  name: ad
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ad
+  template:
+    metadata:
+      labels:
+        app: ad
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/adservice:sample-public-image-v0.10.3
+          name: ad
+          ports:
+            - containerPort: 9555
+          env:
+            - name: PORT
+              value: "9555"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ad
+  name: ad
+spec:
+  type: ClusterIP
+  ports:
+    - name: ad
+      port: 9555
+      targetPort: 9555
+  selector:
+    app: ad
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: checkout
+  name: checkout
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: checkout
+  template:
+    metadata:
+      labels:
+        app: checkout
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/checkoutservice:sample-public-image-v0.10.3
+          name: checkout
+          ports:
+            - containerPort: 5050
+          env:
+            - name: PORT
+              value: "5050"
+            - name: SHIPPING_SERVICE_ADDR
+              value: shipping:50051
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: productcatalog:3550
+            - name: CART_SERVICE_ADDR
+              value: cartservice:7070
+            - name: CURRENCY_SERVICE_ADDR
+              value: currency:7000
+            - name: EMAIL_SERVICE_ADDR
+              value: email:8080
+            - name: PAYMENT_SERVICE_ADDR
+              value: payment:50051
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: checkout
+  name: checkout
+spec:
+  type: ClusterIP
+  ports:
+    - name: checkout
+      port: 5050
+      targetPort: 5050
+  selector:
+    app: checkout
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shoppingassistant
+  name: shoppingassistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shoppingassistant
+  template:
+    metadata:
+      labels:
+        app: shoppingassistant
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/shoppingassistantservice:sample-public-image-v0.10.3
+          name: shoppingassistant
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: shoppingassistant
+  name: shoppingassistant
+spec:
+  type: ClusterIP
+  ports:
+    - name: shoppingassistant
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: shoppingassistant
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/google-samples/microservices-demo/frontend:sample-public-image-v0.10.3
+          name: frontend
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: SHIPPING_SERVICE_ADDR
+              value: shipping:50051
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: productcatalog:3550
+            - name: CART_SERVICE_ADDR
+              value: cartservice:7070
+            - name: CURRENCY_SERVICE_ADDR
+              value: currency:7000
+            - name: AD_SERVICE_ADDR
+              value: ad:9555
+            - name: RECOMMENDATION_SERVICE_ADDR
+              value: recommendation:8080
+            - name: CHECKOUT_SERVICE_ADDR
+              value: checkout:5050
+            - name: SHOPPING_ASSISTANT_SERVICE_ADDR
+              value: shoppingassistant:8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  type: NodePort
+  ports:
+    - name: frontend
+      port: 80
+      targetPort: 8080
+      nodePort: 30007
+  selector:
+    app: frontend

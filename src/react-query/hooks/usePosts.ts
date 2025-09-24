@@ -16,8 +16,8 @@ interface PostQuery {
 const usePosts = (query: PostQuery) => {
   return useQuery<Post[], Error>({
     queryKey: ["posts", query],
-    queryFn: () =>
-      axios
+    queryFn: () => {
+      return axios
         .get(`https://jsonplaceholder.typicode.com/posts`, {
           params: {
             _start: (query.page - 1) * query.pageSize,
@@ -25,9 +25,11 @@ const usePosts = (query: PostQuery) => {
             userId: query.userId,
           },
         })
-        .then((response) => response.data),
+        .then((response) => response.data);
+    },
     staleTime: 1 * 60 * 1000, // 1m
     keepPreviousData: true,
+    enabled: query.userId ? true : false,
   });
 };
 export default usePosts;
