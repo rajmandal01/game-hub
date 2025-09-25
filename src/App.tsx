@@ -6,12 +6,12 @@ import GenreList from "./components/GenreList";
 import NavBar from "./components/NavBar";
 import PlatformSelector from "./components/PlatformSelector";
 import SortSelector from "./components/SortSelector";
-import { Platform } from "./hooks/useGames";
 import { Genre } from "./hooks/useGenres";
 import ToDoList from "./react-query/TodoList";
 import Posts from "./react-query/Posts";
 import InfintePosts from "./react-query/InfinitePosts";
 import TodoForm from "./react-query/TodoForm";
+import { Platform } from "./hooks/usePlatforms";
 
 export interface GameQuery {
   genre: Genre | null;
@@ -34,7 +34,7 @@ function App() {
         lg: "250px 1fr" as const,
       }}
     >
-      {/* <GridItem area="nav">
+      <GridItem area="nav">
         <NavBar onSearch={(searchText) => setGameQuery({ ...gameQuery, searchText })} />
       </GridItem>
       <Show above="lg">
@@ -44,9 +44,9 @@ function App() {
             onSelectGenre={(genre) => setGameQuery({ ...gameQuery, genre })}
           />
         </GridItem>
-      </Show> */}
+      </Show>
       <GridItem area="main">
-        {/* <Box paddingLeft={2}>
+        <Box paddingLeft={2}>
           <GameHeading gameQuery={gameQuery} />
           <Flex marginBottom={5}>
             <Box marginRight={5}>
@@ -61,13 +61,13 @@ function App() {
             />
           </Flex>
         </Box>
-        <GameGrid gameQuery={gameQuery} /> */}
-        <GridItem>
-          {/* <Posts /> */}
-          {/* <InfintePosts />  */}
-          <TodoForm />
-          <ToDoList />
-        </GridItem>
+        <GameGrid gameQuery={gameQuery} />
+        {/* <GridItem>
+          <Posts />
+        <InfintePosts /> 
+        <TodoForm />
+          <ToDoList /> 
+        </GridItem> */}
       </GridItem>
     </Grid>
   );
