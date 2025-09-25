@@ -1,7 +1,11 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://jsonplaceholder.typicode.com",
+  // baseURL: "https://jsonplaceholder.typicode.com",
+  baseURL: "https://api.rawg.io/api",
+  params: {
+    key: "5de2bf227b1b4a0caa8877934cbc6a73",
+  },
 });
 
 class APIClient<T> {
